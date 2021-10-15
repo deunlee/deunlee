@@ -17,11 +17,11 @@ function about()
 {
     const name   = 'DeunLee'.toLowerCase();
   
-    const blog   = new URL(`https://${name}.com`);
+    const blog   = new URL('https://' + name + '.com');
   
-    const email  = `${name}@${blog.hostname}`;
+    const email  = name + '@' + blog.hostname;
   
-    const github = `https://github.com/${name}`;
+    const github = 'https://github.com/' + name;
   
     const likes  = [
         'typescript',
@@ -32,4 +32,7 @@ function about()
 }
 
 console.log(about());
+
+// pgp
+// https://carbon.now.sh/
 -->
