@@ -1,4 +1,4 @@
-![](https://raw.githubusercontent.com/deunlee/deunlee/main/about.png)
+![](https://raw.githubusercontent.com/deunlee/deunlee/7f611b5a54e0672132e14449922494f7fd849ca0/about.png)
 
 <!--
 - 🔭 I’m currently working on ...
