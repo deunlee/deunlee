@@ -1,4 +1,4 @@
-![](https://raw.githubusercontent.com/deunlee/deunlee/main/about2.png)
+![](https://raw.githubusercontent.com/deunlee/deunlee/main/about.png)
 
 <!--
 - 🔭 I’m currently working on ...
@@ -20,7 +20,9 @@ function about()
     const blog   = new URL('https://' + name + '.com');
   
     const email  = name + '@' + blog.hostname;
-  
+ 
+    const pgp    = '065D 94E2 2C89 B075 6F4E ADFD 34B6 6605 F41F 207B';
+
     const github = 'https://github.com/' + name;
   
     const likes  = [
@@ -28,11 +30,9 @@ function about()
         'rust'
     ];
   
-    return { name, blog, email, github, likes };
+    return { name, blog, email, pgp, github, likes };
 }
 
 console.log(about());
-
-// pgp
 // https://carbon.now.sh/
 -->
