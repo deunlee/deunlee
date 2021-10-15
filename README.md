@@ -1,10 +1,6 @@
-### Hi there 👋
+![](https://raw.githubusercontent.com/deunlee/deunlee/main/about.png)
 
 <!--
-**deunlee/deunlee** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-
-Here are some ideas to get you started:
-
 - 🔭 I’m currently working on ...
 - 🌱 I’m currently learning ...
 - 👯 I’m looking to collaborate on ...
@@ -13,4 +9,27 @@ Here are some ideas to get you started:
 - 📫 How to reach me: ...
 - 😄 Pronouns: ...
 - ⚡ Fun fact: ...
+-->
+
+
+<!--
+function about()
+{
+    const name   = 'DeunLee'.toLowerCase();
+  
+    const blog   = new URL(`https://${name}.com`);
+  
+    const email  = `${name}@${blog.hostname}`;
+  
+    const github = `https://github.com/${name}`;
+  
+    const likes  = [
+        'typescript',
+        'rust'
+    ];
+  
+    return { name, blog, email, github, likes };
+}
+
+console.log(about());
 -->
