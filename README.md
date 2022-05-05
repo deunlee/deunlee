@@ -1,4 +1,4 @@
-![](https://raw.githubusercontent.com/deunlee/deunlee/7f611b5a54e0672132e14449922494f7fd849ca0/about.png)
+![](https://raw.githubusercontent.com/deunlee/deunlee/main/about.png)
 
 [PGP](https://keys.openpgp.org/search?q=065D94E22C89B0756F4EADFD34B66605F41F207B)
 
@@ -13,28 +13,25 @@
 - ⚡ Fun fact: ...
 -->
 
+<!-- https://carbon.now.sh/ -->
 
 <!--
 function about()
 {
-    const name   = 'DeunLee'.toLowerCase();
+    let name   = 'DeunLee';
   
-    const blog   = new URL('https://' + name + '.com');
+    let id     = name.toLowerCase();
   
-    const email  = name + '@' + blog.hostname;
+    let email  = id + '@' + id + '.com';
  
-    const pgp    = '065D 94E2 2C89 B075 6F4E ADFD 34B6 6605 F41F 207B';
+    let pgp    = '065D 94E2 2C89 B075 6F4E ADFD 34B6 6605 F41F 207B';
 
-    const github = 'https://github.com/' + name;
+    let github = 'https://github.com/' + id;
   
-    const likes  = [
-        'typescript',
-        'rust'
-    ];
+    let likes  = ['javascript', 'typescript', 'python', 'rust'];
   
-    return { name, blog, email, pgp, github, likes };
+    return { name, id, email, pgp, github, likes };
 }
 
 console.log(about());
-// https://carbon.now.sh/
 -->
