@@ -35,3 +35,12 @@ function about()
 
 console.log(about());
 -->
+
+<!--
+git config --global user.name "Deun Lee"
+git config --global user.email "54697735+deunlee@users.noreply.github.com"
+git config --global -l
+
+git config --local -l
+
+-->
