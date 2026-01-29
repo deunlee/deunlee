@@ -12,4 +12,4 @@
 -->
 
 <!-- [![solved.ac](http://mazassumnida.wtf/api/v2/generate_badge?boj=deunlee)](https://solved.ac/deunlee) -->
-![solved.ac](http://mazassumnida.wtf/api/v2/generate_badge?boj=deunlee)
+<!-- ![solved.ac](http://mazassumnida.wtf/api/v2/generate_badge?boj=deunlee) -->
