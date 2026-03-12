@@ -1,0 +1,58 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "C/C++: Build Active File (g++.exe)",
+            "type": "cppbuild",
+            "detail": "Compiler: C:\\msys64\\mingw64\\bin\\g++.exe",
+            "command": "C:\\msys64\\mingw64\\bin\\g++.exe",
+            "args": [
+                "-Wall",
+                "-std=c++17",
+                "-g",
+                "${file}",
+                "-o",
+                // "${fileDirname}\\build\\${fileBasenameNoExtension}.exe",
+                "${workspaceFolder}\\.vscode\\build\\${fileBasenameNoExtension}.exe",
+                // "-lwsock32" // #pragma comment(lib, "ws2_32"),
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                // "cwd": "${fileDirname}",
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            // "dependsOn": [
+            //     "C/C++: Create Build Directory",
+            // ]
+        },
+        {
+            "label": "C/C++: Create Build Directory",
+            "type": "shell",
+            "linux": {
+                "command": "mkdir -p ./.vscode/build"
+            },
+            "windows": {
+                "command": "cmd",
+                "args": [
+                    "/C",
+                    "if not exist .\\.vscode\\build mkdir .\\.vscode\\build"
+                ]
+            }
+        },
+        {
+            "label": "C/C++: Run Active File",
+            "type": "shell",
+            "command": "${workspaceFolder}\\.vscode\\build\\${fileBasenameNoExtension}.exe",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }
+    ]
+}

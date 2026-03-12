@@ -1,0 +1,10 @@
+git config --local user.name "Deun Lee"
+git config --local user.email "deunlee@deunlee.com"
+git config --local -l
+
+git config --global -l
+
+git config --global core.eol lf
+git config --global core.autocrlf input
+
+Update
