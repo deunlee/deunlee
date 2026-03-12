@@ -17,5 +17,5 @@
     {
         "key": "ctrl+shift+r",
         "command": "workbench.action.openRecent"
-    },
+    }
 ]
