@@ -1,0 +1,24 @@
+{
+    "permissions": {
+        "allow": [
+            "Read",
+            "Write",
+            "Edit",
+            "WebFetch",
+            "WebSearch",
+            "Bash(curl *)",
+            "Bash(gh search *)",
+            "Bash(gh issue *)",
+            "Bash(gh release *)",
+            "Bash(git *)",
+            "Bash(node *)",
+            "Bash(pnpm *)",
+            "Bash(python *)",
+            "Skill(update-config)",
+            "Skill(superpowers:brainstorming)",
+            "Skill(frontend-design:frontend-design)",
+            "mcp__plugin_context7_context7__*",
+            "mcp__plugin_playwright_playwright__*"
+        ]
+    }
+}
