@@ -1,0 +1,60 @@
+// %LOCALAPPDATA%/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState
+{
+    "$help": "https://aka.ms/terminal-documentation",
+    "$schema": "https://aka.ms/terminal-profiles-schema",
+    "actions": [],
+    "copyFormatting": "none",
+    "copyOnSelect": false,
+    "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+    "disabledProfileSources": [
+        "Windows.Terminal.Azure",
+        "Windows.Terminal.VisualStudio"
+    ],
+    "initialCols": 130,
+    "initialRows": 40,
+    "keybindings": [
+        { "id": "Terminal.CopyToClipboard",    "keys": "ctrl+c" },
+        { "id": "Terminal.PasteFromClipboard", "keys": "ctrl+v" },
+        { "id": "Terminal.DuplicatePaneAuto",  "keys": "alt+shift+d" }
+    ],
+    "newTabMenu": [
+        { "type": "remainingProfiles" }
+    ],
+    "profiles": {
+        "defaults": {
+            "colorScheme": "Dark+",
+            "font": { "face": "Cascadia Mono, MesloLGS NF" }
+        },
+        "list": [
+            {
+                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+                "name": "Windows PowerShell",
+                "startingDirectory": "C:\\Users\\user\\Desktop"
+            },
+            {
+                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "guid": "{b16ef4c9-363a-4eb9-9838-2a3e489879f3}",
+                "name": "Windows PowerShell (\uad00\ub9ac\uc790)",
+                "icon": "ms-appx:///ProfileIcons/{61c54bbd-c2c6-5271-96e7-009a87ff44bf}.png",
+                "elevate": true
+            },
+            {
+                "commandline": "%SystemRoot%\\System32\\cmd.exe",
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+            },
+            {
+            },
+            {
+                "name": "Git Bash",
+                "icon": "C:/Program Files/Git/mingw64/share/git/git-for-windows.ico",
+            },
+            {
+                "name": "MSYS2 UCRT64",
+                "icon": "C:/msys64/ucrt64.ico",
+            }
+        ]
+    },
+    "schemes": [],
+    "themes": []
+}

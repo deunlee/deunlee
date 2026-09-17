@@ -1,0 +1,48 @@
+{
+    "workbench.colorTheme": "Dark+",
+    "workbench.iconTheme": "vscode-icons",
+    "workbench.tree.indent": 16,
+    "workbench.editor.empty.hint": "hidden",
+    // "explorer.confirmDelete": false,
+    // "explorer.confirmDragAndDrop": false,
+    "search.showLineNumbers": true,
+
+    "editor.fontSize": 16, // Windows=16, macOS=14
+    "editor.fontFamily": "D2Coding, Consolas, Hack, 'Malgun Gothic', monospace",
+    // "editor.fontFamily": "'MesloLGS NF', Menlo, Monaco, 'Courier New', monospace",
+    "editor.rulers": [120],
+    "editor.renderWhitespace": "all",
+    "editor.guides.bracketPairs": true,
+    "editor.stickyScroll.enabled": false,
+    "editor.unicodeHighlight.ambiguousCharacters": true,
+    "editor.unicodeHighlight.invisibleCharacters": true,
+    // "editor.unicodeHighlight.nonBasicASCII": true,
+    "editor.unicodeHighlight.includeComments": true,
+    "editor.unicodeHighlight.includeStrings": true,
+    // "diffEditor.hideUnchangedRegions.enabled": true,
+
+    "files.trimTrailingWhitespace": true,
+    "files.trimFinalNewlines": true,
+    "files.insertFinalNewline": true,
+
+    // "terminal.integrated.fontFamily": "'Cascadia Code', 'MesloLGS NF', D2Coding, Consolas, monospace",
+    // "terminal.integrated.fontSize": 14,
+    // "terminal.integrated.lineHeight": 1.2,
+    // "terminal.integrated.fontWeight": "normal",
+    // "terminal.integrated.stickyScroll.enabled": false,
+    "terminal.integrated.initialHint": false, // Ctrl+Space=자동완성
+
+    "telemetry.telemetryLevel": "off",
+    "telemetry.feedback.enabled": false,
+    "telemetry.editStats.enabled": false,
+
+    "chat.titleBar.signIn.enabled": false,
+    "git.openRepositoryInParentFolders": "never",
+    "vsicons.dontShowNewVersionMessage": true,
+    "gitlens.telemetry.enabled": false,
+    "dotnetAcquisitionExtension.enableTelemetry": false,
+
+    "macros": {
+        "commentLine": ["editor.action.commentLine", "cursorDown"]
+    }
+}

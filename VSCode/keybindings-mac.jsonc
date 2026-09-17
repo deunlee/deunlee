@@ -1,0 +1,13 @@
+[
+    { "key": "cmd+up",   "command": "editor.action.moveLinesUpAction",    "when": "editorTextFocus && !editorReadonly" },
+    { "key": "cmd+down", "command": "editor.action.moveLinesDownAction",  "when": "editorTextFocus && !editorReadonly" },
+    { "key": "alt+up",   "command": "-editor.action.moveLinesUpAction",   "when": "editorTextFocus && !editorReadonly" },
+    { "key": "alt+down", "command": "-editor.action.moveLinesDownAction", "when": "editorTextFocus && !editorReadonly" },
+
+    { "key": "alt+up",   "command": "cursorTop",     "when": "textInputFocus" },
+    { "key": "alt+down", "command": "cursorBottom",  "when": "textInputFocus" },
+    { "key": "cmd+up",   "command": "-cursorTop",    "when": "textInputFocus" },
+    { "key": "cmd+down", "command": "-cursorBottom", "when": "textInputFocus" },
+]
+
+//  { "key": "ctrl+/", "command": "macros.commentLine", "when": "editorTextFocus && !editorReadonly" }

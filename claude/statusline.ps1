@@ -1,4 +1,4 @@
-﻿# Claude Code 상태줄(statusLine) 스크립트
+﻿# Claude Code 상태줄(Status Line) 스크립트
 param()
 
 $esc      = [char]27
@@ -21,6 +21,7 @@ try {
     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
     $data = [Console]::In.ReadToEnd() | ConvertFrom-Json # Read JSON from stdin
 } catch {
+    $msg = ($_.Exception.Message -replace "\r?\n", " ")
     [Console]::Out.Write("${red}[Status Line Error]: ${msg}${reset}")
     exit 0
 }
@@ -41,16 +42,26 @@ function Get-UsageColor([int]$percent) {
 # 시간을 사람이 읽기 쉬운 표기로 변환 ("4d3h", "2h12m", "45m", "now")
 function Format-Duration([long]$totalSec) {
     if ($totalSec -le 0) { return "now" }
-    $d = [int]($totalSec / 86400)
-    $h = [int](($totalSec % 86400) / 3600)
-    $m = [int](($totalSec % 3600) / 60)
+    $d = [int][math]::Floor($totalSec / 86400)
+    $h = [int][math]::Floor(($totalSec % 86400) / 3600)
+    $m = [int][math]::Floor(($totalSec % 3600) / 60)
     if ($d -gt 0) { return "${d}d${h}h" }
     if ($h -gt 0) { return "${h}h${m}m" }
     return "${m}m"
 }
 
-function Format-Tokens([double]$v) {
+function Format-Tokens([double]$tokens) {
+    if ($tokens -ge 1000000) {
+        $m = $tokens / 1000000
+        if ($m -lt 10) { return ("{0:F1}M" -f $m) }
+        return ("{0:F0}M" -f $m)
     }
+    if ($tokens -ge 1000) {
+        $k = $tokens / 1000
+        if ($k -lt 10) { return ("{0:F1}k" -f $k) }
+        return ("{0:F0}k" -f $k)
+    }
+    return ([int]$v).ToString()
 }
 
 function Test-GitRepo([string]$path) {
@@ -69,7 +80,7 @@ function Get-DirField($data) {
         $cwdDisplay = Split-Path -Leaf $cwdFull
         if ([string]::IsNullOrEmpty($cwdDisplay)) { $cwdDisplay = $cwdFull }
     }
-    $dirSeg = "${cyan}${cwdDisplay}${reset}"
+    $dirName = "${cyan}${cwdDisplay}${reset}"
     $branch = ""
     if (-not [string]::IsNullOrEmpty($cwdFull) -and (Test-GitRepo $cwdFull)) {
         try {
@@ -77,12 +88,13 @@ function Get-DirField($data) {
             if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrEmpty($b)) {
                 $branch = $b.Trim()
             }
-        } catch { }
+        } catch {
+        }
     }
     if ($branch) {
-        return "${dirSeg} ${yellow}${bold}(${branch})${reset}"
+        return "${dirName} ${yellow}${bold}(${branch})${reset}"
     }
-    return "${dirSeg} ${lgray}(no-git)${reset}"
+    return "${dirName} ${lgray}(no-git)${reset}"
 }
 
 function Get-ModelField($data) {
@@ -139,11 +151,44 @@ function Get-ContextLineField($data) {
 }
 
 function Get-TokenUsage($data) {
+    $cumBase  = $data.context_window.total_input_tokens
+    $cumOut   = $data.context_window.total_output_tokens
+    $cumCache = $null
 
+        }
+
+        $found = $false
+        foreach ($file in $files) {
+            try { $lines = [System.IO.File]::ReadLines($file) } catch { continue }
+            foreach ($line in $lines) {
+                if ([string]::IsNullOrWhiteSpace($line)) { continue }
+                try { $obj = $line | ConvertFrom-Json } catch { continue }
+                if ($obj.type -ne "assistant") { continue }
+                $usage = $obj.message.usage
+                if ($null -eq $usage) { continue }
+                $id = $obj.message.id
+                if (-not $id) { $id = $obj.uuid }
+                $found = $true
+                if ($null -ne $usage.input_tokens)                { $base  += [long]$usage.input_tokens }
+                if ($null -ne $usage.cache_read_input_tokens)     { $cache += [long]$usage.cache_read_input_tokens }
+                if ($null -ne $usage.cache_creation_input_tokens) { $cache += [long]$usage.cache_creation_input_tokens }
+                if ($null -ne $usage.output_tokens)               { $out   += [long]$usage.output_tokens }
+            }
+        }
+        if ($found) {
+            $cumBase  = $base
+            $cumCache = $cache
+            $cumOut   = $out
+        }
+    }
 
     $upArrow   = [char]0x2191
     $downArrow = [char]0x2193
     $bits = @()
+    if ($null -ne $cumBase)  { $bits += "${bblue}${upArrow}$(Format-Tokens $cumBase)${reset}" }
+    if ($null -ne $cumOut)   { $bits += "${bcyan}${downArrow}$(Format-Tokens $cumOut)${reset}" }
+    if ($null -ne $cumCache) { $bits += "${gray}($(Format-Tokens $cumCache))${reset}" }
+    if ($bits.Count -eq 0) { return $null }
     return ($bits -join ' ')
 }
 
@@ -152,7 +197,6 @@ function Get-CostTokenField($data) {
     if ($null -ne $data.cost.total_cost_usd) {
         $cost = [double]$data.cost.total_cost_usd
     }
-    return "${yellow}`$" + ("{0:F2}" -f $cost) + "${reset}"
 }
 
 function Get-RateLimitField($data) {
@@ -190,8 +234,8 @@ function Get-RateLimitField($data) {
 function Get-VersionField($data) {
     $verFull = $data.version
     if ([string]::IsNullOrEmpty($verFull)) { return $null }
-    $last = $verFull.Split(".")[-1]
-    return "${dim}cc.${last}${reset}"
+    $verLast = $verFull.Split(".")[-1]
+    return "${dim}cc.${verLast}${reset}"
 }
 
 ################################################################################
@@ -208,5 +252,6 @@ try {
     ) | Where-Object { $_ -ne $null }
     [Console]::Out.Write(($parts -join $delim))
 } catch {
+    $msg = ($_.Exception.Message -replace "\r?\n", " ")
     [Console]::Out.Write("${red}[Status Line Error]: ${msg}${reset}")
 }
