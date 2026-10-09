@@ -33,7 +33,7 @@ if ($null -eq $data) {
 ################################################################################
 
 # 사용률(%)에 따른 색상 반환
-function Get-UsageColor([int]$percent) {
+function Get-UsageColor([double]$percent) {
     if     ($percent -ge 90) { return $red    } # 90% 이상
     elseif ($percent -ge 70) { return $yellow }
     else                     { return $green  } # 70% 미만
@@ -61,11 +61,12 @@ function Format-Tokens([double]$tokens) {
         if ($k -lt 10) { return ("{0:F1}k" -f $k) }
         return ("{0:F0}k" -f $k)
     }
-    return ([int]$v).ToString()
+    return ([long]$tokens).ToString()
 }
 
 function Test-GitRepo([string]$path) {
     if ([string]::IsNullOrEmpty($path)) { return $false }
+    while ($null -ne $dir) {
     }
     return $false
 }
@@ -76,11 +77,16 @@ function Get-DirField($data) {
     $cwdFull = $data.cwd
     if ([string]::IsNullOrEmpty($cwdFull)) {
         $cwdDisplay = "?"
+function Get-LeafName([string]$path) {
+}
+
     } else {
         $cwdDisplay = Split-Path -Leaf $cwdFull
         if ([string]::IsNullOrEmpty($cwdDisplay)) { $cwdDisplay = $cwdFull }
     }
     $dirName = "${cyan}${cwdDisplay}${reset}"
+}
+
     $branch = ""
     if (-not [string]::IsNullOrEmpty($cwdFull) -and (Test-GitRepo $cwdFull)) {
         try {
@@ -95,6 +101,8 @@ function Get-DirField($data) {
         return "${dirName} ${yellow}${bold}(${branch})${reset}"
     }
     return "${dirName} ${lgray}(no-git)${reset}"
+}
+
 }
 
 function Get-ModelField($data) {
@@ -129,21 +137,17 @@ function Get-EffortField($data) {
     return ($bits -join "")
 }
 
-function Get-ContextLineField($data) {
     $bits = @()
+function Get-ContextField($data) {
     $usedPct = $data.context_window.used_percentage
-    if ($null -ne $usedPct) {
-        $usedPct = [math]::Round([double]$usedPct)
+    if ($null -eq $usedPct) {
+        $pctStr = "-%"
     } else {
-        $total  = $data.context_window.total_input_tokens
-        $maxWin = $data.context_window.context_window_size
-        if ($maxWin -and $maxWin -gt 0) {
-            $usedPct = [math]::Round(([double]$total / [double]$maxWin) * 100)
-        }
-    }
     if ($null -ne $usedPct) {
         $bits += "${bold}${magenta}ctx:${reset}${usedPct}%"
     }
+}
+
     $linesAdd = if ($null -ne $data.cost.total_lines_added)   { [int]$data.cost.total_lines_added   } else { 0 }
     $linesDel = if ($null -ne $data.cost.total_lines_removed) { [int]$data.cost.total_lines_removed } else { 0 }
     $bits += "${green}+${linesAdd}${reset}${lgray}/${reset}${red}-${linesDel}${reset}"
@@ -153,7 +157,6 @@ function Get-ContextLineField($data) {
 function Get-TokenUsage($data) {
     $cumBase  = $data.context_window.total_input_tokens
     $cumOut   = $data.context_window.total_output_tokens
-    $cumCache = $null
 
         }
 
@@ -176,9 +179,8 @@ function Get-TokenUsage($data) {
             }
         }
         if ($found) {
-            $cumBase  = $base
-            $cumCache = $cache
-            $cumOut   = $out
+            $cumBase = $base
+            $cumOut  = $out
         }
     }
 
@@ -187,7 +189,6 @@ function Get-TokenUsage($data) {
     $bits = @()
     if ($null -ne $cumBase)  { $bits += "${bblue}${upArrow}$(Format-Tokens $cumBase)${reset}" }
     if ($null -ne $cumOut)   { $bits += "${bcyan}${downArrow}$(Format-Tokens $cumOut)${reset}" }
-    if ($null -ne $cumCache) { $bits += "${gray}($(Format-Tokens $cumCache))${reset}" }
     if ($bits.Count -eq 0) { return $null }
     return ($bits -join ' ')
 }
@@ -235,7 +236,7 @@ function Get-VersionField($data) {
     $verFull = $data.version
     if ([string]::IsNullOrEmpty($verFull)) { return $null }
     $verLast = $verFull.Split(".")[-1]
-    return "${dim}cc.${verLast}${reset}"
+    return "${gray}v.${verLast}${reset}"
 }
 
 ################################################################################
@@ -244,8 +245,8 @@ try {
     $parts = @(
         (Get-DirField         $data),
         (Get-ModelField       $data),
-        (Get-EffortField      $data),
-        (Get-ContextLineField $data),
+        (Get-ContextField     $data),
+        (Get-LinesField       $data),
         (Get-CostTokenField   $data),
         (Get-RateLimitField   $data),
         (Get-VersionField     $data)
