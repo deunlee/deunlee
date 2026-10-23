@@ -15,6 +15,7 @@ $lgray    = "$esc[37m"
 $gray     = "$esc[90m"
 $bblue    = "$esc[94m" # bright blue (for input tokens)
 $bcyan    = "$esc[96m" # bright cyan (for output tokens)
+$black    = "$esc[30m"
 $delim    = "${dim} | ${reset}"
 
 try {
@@ -73,20 +74,16 @@ function Test-GitRepo([string]$path) {
 
 ################################################################################
 
-function Get-DirField($data) {
-    $cwdFull = $data.cwd
-    if ([string]::IsNullOrEmpty($cwdFull)) {
-        $cwdDisplay = "?"
 function Get-LeafName([string]$path) {
 }
 
     } else {
-        $cwdDisplay = Split-Path -Leaf $cwdFull
-        if ([string]::IsNullOrEmpty($cwdDisplay)) { $cwdDisplay = $cwdFull }
     }
-    $dirName = "${cyan}${cwdDisplay}${reset}"
 }
 
+function Get-DirField($data) {
+    $cwdFull = $data.cwd
+    $dirSeg = "${cyan}${cwdDisplay}${reset}"
     $branch = ""
     if (-not [string]::IsNullOrEmpty($cwdFull) -and (Test-GitRepo $cwdFull)) {
         try {
@@ -98,11 +95,22 @@ function Get-LeafName([string]$path) {
         }
     }
     if ($branch) {
-        return "${dirName} ${yellow}${bold}(${branch})${reset}"
+        return "${dirSeg} ${yellow}${bold}(${branch})${reset}"
     }
-    return "${dirName} ${lgray}(no-git)${reset}"
+    return "${dirSeg} ${lgray}(no-git)${reset}"
 }
 
+function Get-EffortLabel($data) {
+    $level = $data.effort.level
+    $color = switch ($level) {
+        "low"    { $cyan   }
+        "medium" { $yellow }
+        "high"   { $red    }
+        "xhigh"  { "${black}${bgRed}" }
+        "max"    { "${black}${bgBmagenta}" }
+        default  { $reset  }
+    }
+    return "${color}${level}${reset}"
 }
 
 function Get-ModelField($data) {
@@ -110,80 +118,42 @@ function Get-ModelField($data) {
     if ([string]::IsNullOrEmpty($model)) {
         $model = $data.model.id
     }
-    if ($model) {
         $model = $model.Replace(" context", "").Replace("(", "").Replace(")", "")
-    }
-    if ($model) { return "${green}${model}${reset}" }
-    return $null
+    $bits = @()
+    if ($model) { $bits += "${green}${model}${reset}" }
+    $effort = Get-EffortLabel $data
+    if ($effort) { $bits += $effort }
+    return ($bits -join " ")
 }
 
-function Get-EffortField($data) {
-    $level   = $data.effort.level
-    $thinkOn = $data.thinking.enabled -eq $true
-    if (-not ($level -or $thinkOn)) { return $null }
-    $bits = @()
-    if ($level) {
-        $color = switch ($level) {
-            "high"  { $yellow }
-            "xhigh" { $red    }
-            "max"   { $red    }
-            default { $reset  }
-        }
-        $bits += "${color}${level}${reset}"
-    }
-    if ($thinkOn) {
-        $bits += "${cyan}+think${reset}"
-    }
-    return ($bits -join "")
+function Format-Elapsed($ms) {
+    if ($null -eq $ms) { return "-" }
+    $sec = [long][math]::Floor([double]$ms / 1000)
+    if ($sec -lt 60) { return "0m" }
+    return Format-Duration $sec
 }
 
-    $bits = @()
 function Get-ContextField($data) {
     $usedPct = $data.context_window.used_percentage
     if ($null -eq $usedPct) {
         $pctStr = "-%"
     } else {
-    if ($null -ne $usedPct) {
-        $bits += "${bold}${magenta}ctx:${reset}${usedPct}%"
+        $pctStr = "$(Get-UsageColor $usedPct)${usedPct}%${reset}"
     }
+    $wall = Format-Elapsed $data.cost.total_duration_ms
+    $api  = Format-Elapsed $data.cost.total_api_duration_ms
+    return "${bold}${magenta}ctx:${reset}${pctStr} ${gray}(${wall}/${api})${reset}"
 }
 
+function Get-LinesField($data) {
     $linesAdd = if ($null -ne $data.cost.total_lines_added)   { [int]$data.cost.total_lines_added   } else { 0 }
     $linesDel = if ($null -ne $data.cost.total_lines_removed) { [int]$data.cost.total_lines_removed } else { 0 }
-    $bits += "${green}+${linesAdd}${reset}${lgray}/${reset}${red}-${linesDel}${reset}"
-    return ($bits -join ' ')
+    return "${green}+${linesAdd}${reset}${lgray}/${reset}${red}-${linesDel}${reset}"
 }
 
 function Get-TokenUsage($data) {
     $cumBase  = $data.context_window.total_input_tokens
     $cumOut   = $data.context_window.total_output_tokens
-
-        }
-
-        $found = $false
-        foreach ($file in $files) {
-            try { $lines = [System.IO.File]::ReadLines($file) } catch { continue }
-            foreach ($line in $lines) {
-                if ([string]::IsNullOrWhiteSpace($line)) { continue }
-                try { $obj = $line | ConvertFrom-Json } catch { continue }
-                if ($obj.type -ne "assistant") { continue }
-                $usage = $obj.message.usage
-                if ($null -eq $usage) { continue }
-                $id = $obj.message.id
-                if (-not $id) { $id = $obj.uuid }
-                $found = $true
-                if ($null -ne $usage.input_tokens)                { $base  += [long]$usage.input_tokens }
-                if ($null -ne $usage.cache_read_input_tokens)     { $cache += [long]$usage.cache_read_input_tokens }
-                if ($null -ne $usage.cache_creation_input_tokens) { $cache += [long]$usage.cache_creation_input_tokens }
-                if ($null -ne $usage.output_tokens)               { $out   += [long]$usage.output_tokens }
-            }
-        }
-        if ($found) {
-            $cumBase = $base
-            $cumOut  = $out
-        }
-    }
-
     $upArrow   = [char]0x2191
     $downArrow = [char]0x2193
     $bits = @()
@@ -198,38 +168,34 @@ function Get-CostTokenField($data) {
     if ($null -ne $data.cost.total_cost_usd) {
         $cost = [double]$data.cost.total_cost_usd
     }
+    $costStr = "${yellow}`$" + ("{0:F2}" -f $cost) + "${reset}"
+    $tokStr = Get-TokenUsage $data
+    if ($tokStr) { return "$costStr $tokStr" }
+    return $costStr
+}
+
+function Format-RateWindow([string]$label, $window, [long]$nowEpoch) {
+    $percent = $window.used_percentage
+    if ($null -eq $percent) {
+        $pctStr = "-%"
+    } else {
+        $pctStr = "$(Get-UsageColor $percent)${percent}%${reset}"
+    }
+    if ($null -eq $window.resets_at) {
+        $untilReset = "-"
+    } else {
+        $untilReset = Format-Duration ([long]$window.resets_at - $nowEpoch)
+    }
+    return "${lgray}${label}:${reset}${pctStr} ${gray}(${untilReset})${reset}"
 }
 
 function Get-RateLimitField($data) {
     $nowEpoch = [long][math]::Floor(([DateTimeOffset]::UtcNow).ToUnixTimeSeconds())
-    $bits = @()
-
-    $fiveHour = $data.rate_limits.five_hour
-    if ($null -ne $fiveHour -and $null -ne $fiveHour.used_percentage) {
-        $percent = [math]::Round([double]$fiveHour.used_percentage)
-        $color   = Get-UsageColor $percent
-        $text    = "${lgray}5h:${reset}${color}${percent}%${reset}"
-        if ($null -ne $fiveHour.resets_at) {
-            $untilReset = Format-Duration ([long]$fiveHour.resets_at - $nowEpoch)
-            $text += " ${gray}(${untilReset})${reset}"
-        }
-        $bits += $text
-    }
-
-    $sevenDay = $data.rate_limits.seven_day
-    if ($null -ne $sevenDay -and $null -ne $sevenDay.used_percentage) {
-        $percent = [math]::Round([double]$sevenDay.used_percentage)
-        $color   = Get-UsageColor $percent
-        $text    = "${lgray}7d:${reset}${color}${percent}%${reset}"
-        if ($null -ne $sevenDay.resets_at) {
-            $untilReset = Format-Duration ([long]$sevenDay.resets_at - $nowEpoch)
-            $text += " ${gray}(${untilReset})${reset}"
-        }
-        $bits += $text
-    }
-
-    if ($bits.Count -gt 0) { return ($bits -join $delim) }
-    return $null
+    $bits = @(
+        (Format-RateWindow "5h" $data.rate_limits.five_hour $nowEpoch),
+        (Format-RateWindow "7d" $data.rate_limits.seven_day $nowEpoch)
+    )
+    return ($bits -join $delim)
 }
 
 function Get-VersionField($data) {

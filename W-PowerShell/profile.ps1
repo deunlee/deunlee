@@ -1,6 +1,11 @@
+﻿# %USERPROFILE%\Documents\WindowsPowerShell
+
 function c { Clear-Host }
 function q { exit }
-function ll { eza -alhF -l --icons --group-directories-first --time-style=long-iso --color-scale=age @args }
+function l  { eza -a --hyperlink=auto --icons --group-directories-first @args }
+function ll { eza -alh --classify=auto --git --icons --group-directories-first --time-style=long-iso --color-scale=age @args }
+function lt { eza --tree --level=2 --icons --git-ignore @args }
+
 
 function cc {
     $old = $env:CLAUDE_CONFIG_DIR
@@ -24,3 +29,10 @@ function cc3 {
         winget install --id $id --exact --scope machine
     }
 }
+
+function what {
+    foreach ($c in $found) {
+        }
+    }
+}
+

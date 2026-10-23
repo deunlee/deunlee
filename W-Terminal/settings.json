@@ -1,4 +1,5 @@
 // %LOCALAPPDATA%/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState
+// https://github.com/microsoft/terminal/blob/v1.26.2734.0/src/cascadia/TerminalSettingsModel/defaults.json
 {
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
@@ -15,11 +16,12 @@
     "keybindings": [
         { "id": "Terminal.CopyToClipboard",    "keys": "ctrl+c" },
         { "id": "Terminal.PasteFromClipboard", "keys": "ctrl+v" },
-        { "id": "Terminal.DuplicatePaneAuto",  "keys": "alt+shift+d" }
+        { "id": "Terminal.DuplicatePaneAuto",  "keys": "alt+shift+d" },
     ],
     "newTabMenu": [
         { "type": "remainingProfiles" }
     ],
+    "windowingBehavior": "useExisting",
     "profiles": {
         "defaults": {
             "colorScheme": "Dark+",
@@ -27,21 +29,26 @@
         },
         "list": [
             {
-                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "name": "PowerShell",
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
-                "name": "Windows PowerShell",
+                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
                 "startingDirectory": "C:\\Users\\user\\Desktop"
             },
             {
+                "name": "PowerShell (Admin)",
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-                "guid": "{b16ef4c9-363a-4eb9-9838-2a3e489879f3}",
-                "name": "Windows PowerShell (\uad00\ub9ac\uc790)",
-                "icon": "ms-appx:///ProfileIcons/{61c54bbd-c2c6-5271-96e7-009a87ff44bf}.png",
-                "elevate": true
+                "icon": "C:\\Windows\\System32\\imageres.dll,-78",
+                "elevate": true,
+                "startingDirectory": "C:\\Users\\user\\Desktop"
             },
             {
-                "commandline": "%SystemRoot%\\System32\\cmd.exe",
+                "name": "Command Prompt",
                 "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "commandline": "%SystemRoot%\\System32\\cmd.exe"
+            },
+            {
+            },
+            {
             },
             {
             },
@@ -56,5 +63,20 @@
         ]
     },
     "schemes": [],
-    "themes": []
+    "theme": "dark-noclose",
+    "themes": [
+        {
+            "name": "dark-noclose",
+            "window": {
+                "applicationTheme": "dark",
+            },
+            "tab": {
+                "background": "terminalBackground",
+                "unfocusedBackground": "#00000000"
+            },
+            "tabRow": {
+                "unfocusedBackground": "#333333FF"
+            }
+        }
+    ]
 }
